@@ -3,10 +3,7 @@ package com.apero.essaytest
 //Demo xây dựng hệ thống quản lý thành viên trong một đội
 //phát triển phần mềm
 
-//7. một đối tượng singleton company
-//- có mot thuoc tinh là danh sach các thành viên trong cty
-// - có một hàm addMember(member: tetamMember) thêm tv
-// - sử dụng componion Object để tạohamfm createDefaultCompany() trả về thể hiện của company
+
 
 //Lớp cha person, constructor chính
 open class Person(val name: String, val age: Int){
