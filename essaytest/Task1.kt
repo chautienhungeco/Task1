@@ -2,14 +2,14 @@ fun main(){
     variable()
     operator()
     typeCasting()
-//    bai4()
-//    bai5()
-//    bai6()
-//    bai7()
-//    bai8()
-//    bai9()
-//    bai10()
-//    bai11()
+    template()
+    conditionalExpressions()
+    forLoop()
+    doWhile()
+    collection()
+    set()
+    map()
+    common()
 }
 // khai bao bien và hằng số
 fun variable(){
@@ -75,15 +75,17 @@ fun typeCasting(){
 }
 
 //Dạng string teamplate
-fun bai4(){
-    val name = "Hung"
-    val age = 22
-    println("Xin chào anh, em là $name và em $age tuổi!")
+fun template(){
+    println("Nhập họ tên: ")
+    val name = readln()
+    println("Nhập vào độ tuổi")
+    val age = readln()
+    println("Người dùng $name có độ tuổi $age")
 }
 
 // Cau truc dieu kien if-else
-fun bai5(){
-    val number: Int = 0
+fun conditionalExpressions(){
+    val number: Int = 10
     if(number > 0){
         println("Đây là số dương")
     }
@@ -93,10 +95,26 @@ fun bai5(){
     else{
         println("Đây là số 0")
     }
+    // gán giá trị cho 1 biến
+    val greeting = if ( number < 20){
+        "xin chào"
+    }
+    else{
+        "tạm biệt"
+    }
+    println(greeting)
 }
 
 //for loop
-fun bai6(){
+fun forLoop(){
+    val a = 1
+    val b = 10
+    var sum = 0
+    val language = arrayOf("Lenin","Hồ Chí Minh","Mác")
+    for (item in language)
+        println(item)
+    for ((index,value) in language.withIndex())
+        println("$index - $value")
     //in ra cac so từ 1-10
     for (i in 1..10){
         println("$i")
@@ -107,10 +125,15 @@ fun bai6(){
         println("$i")
     }
     println()
+    //điều hướng nhảy downto
+    for (i in b downTo a step 2){
+        sum += i
+    }
+    println("sum =: $sum")
 }
 
 // while và do-while
-fun bai7(){
+fun doWhile(){
     // tinh tong tu 1-100 dung while
     var sum = 0
     var i = 1
@@ -131,16 +154,36 @@ fun bai7(){
 
 
 //Collection
-fun  bai8(){
-    //Tạo danh sách tên của 5 người và in ra
+fun  collection(){
+    val list = mutableListOf(3,6,9)
     val people = listOf("Hưng","Đạt","Linh","Chung","Nam")
     people.forEach(){
         println(it)
     }
+    people.forEachIndexed{index: Int, value: String ->
+        println("$index - $value")
+    }
+    //any tra vê true nếu có 1 trong các giá trị đúng
+    people.any { it == "Hưng" }
+
+    //all yeu cầu tất cả phải đúng
+    people.all { it == "Hưng" && it == "Đạt" }
+
+    //count trả về số lượng ptu thỏa mãn điều kiện
+    people.count { it == "Hưng" }
+    //fold tổng từ gtri khơi tạo -> cuối, foldright tổng từ cuối -> đầu)
+    val result = list.fold(0, {total: Int, i: Int ->
+        total + i
+    })
+
+    println("kết quả tổng các phần tử: $result")
+    //sumby tổng tất cả nhưng được xử lý thông qua logic truyền vào
+    val sum = list.sumBy { it * 3 }
+    println("Tổng các phần tử của mảng sau khi * 3: $sum")
 }
 
 //Set
-fun bai9(){
+fun set(){
     //tạo danh sách các số, có số trùng để in ra không thấy trùng
     val phones = setOf("1234","2345","3456","1234")
     println(phones)
@@ -148,14 +191,17 @@ fun bai9(){
 }
 
 //map
-fun bai10(){
+fun map(){
     //tạo map id-> tên, in theo id
-    val students = mapOf(1 to "Hưng", 2 to "Đạt", 3 to "Linh", 4 to "Chung", 5 to "Nam")
+    val students = mapOf(1 to "Tiến Hưng", 2 to "Đạt", 3 to "Linh", 4 to "Chung", 5 to "Trần Hưng")
     println("Học sinh có mã ID = 2 là: ${students[2]}")
+    //tìm theo tên
+    val findStudents = students.filterValues { it.contains("Hưng", ignoreCase = true) }.values
+    println("Danh sách hs tên Hưng: $findStudents")
 }
 
 //một vài hàm thường dùng
-fun  bai11(){
+fun  common(){
     val scores = listOf(4,7,9,10)
     //nhân đôi giá trị
     val double = scores.map { it * 2 }
