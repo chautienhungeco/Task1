@@ -17,7 +17,6 @@ fun variable(){
     var age: Int = 22   //hang so co the thay doi
     var gpa: Float = 7.5f   //diem trung binh
     println("HS Tên: $name, Độ Tuổi: $age, Điểm GPA: $gpa")
-
 }
 //Toán tu
 fun operator(){

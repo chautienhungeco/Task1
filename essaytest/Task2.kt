@@ -4,14 +4,14 @@
 
 
 //Lớp cha person, constructor chính
-open class Person(val name: String, val age: Int){
-    open fun introduce(){
+open class Person(val name: String, val age: Int?){
+    open fun introduce(){   //member function
         //giới thiệu nhân viên
         println("Xin chào mọi người, mình là $name, $age tuổi")
     }
 }
 //lớp con kế thừa Person
-open class Employee(name: String, age: Int, val employeeId: String, val salary: Double) : Person(name,age){
+open class Employee(name: String, age: Int, val employeeId: String, val salary: Double?) : Person(name,age){
     // - ghi đè override hàm introduce để thêm các chi tiết Id và lương
     override fun introduce() {
         println("Tôi là $name nhân viên mới voi ID: $employeeId và mức lương: $salary")
@@ -82,7 +82,6 @@ object Company{
         return company
     }
 }
-
 
 
 fun main(){
