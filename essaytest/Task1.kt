@@ -10,6 +10,8 @@ fun main(){
     set()
     map()
     common()
+    remove()
+    arrayToString()
 }
 // khai bao bien và hằng số
 fun variable(){
@@ -36,7 +38,7 @@ fun operator(){
     println("Sau khi a += 5: $a")
     b -= 2
     println("Sau khi b -= 2: $b")
-    if (a.compareTo(b) >= 0){
+    if (a >= b){
         println("a là phần tử lớn hơn")
         a
     }else{
@@ -217,4 +219,22 @@ fun  common(){
     //duyệt qua it và lấy phần tử đầu, cuối trong list
     scores.forEach() { println("Điểm: $it") }
     println("Số đầu tiên: ${scores.first()}, Số cuối cùng: ${scores.last()}")
+}
+
+//remove duplicate strings
+fun remove(){
+    val devs = arrayOf("Hưng", "Hoài", "Hoa", "Huệ","Hưng","hưng")
+    //println(devs.distinct())
+    //println(devs.toSet())
+    //println(devs.toMutableSet())
+    println(devs.toHashSet()) //Không duy trì thứ tự ban đầu
+}
+//convert array or list to string
+fun arrayToString(){
+    val listCities = listOf("Hà Nội, Bắc Ninh, Đà Nẵng")
+    val messenge = listCities.joinToString(
+        separator = ",",
+        postfix = ": Là các tỉnh thành ở Hà Nội"
+    )
+    print(messenge)
 }

@@ -31,7 +31,11 @@ fun main(){
 
     //apply - cấu hình một đối tượng
     //thực thi một khối lệnh trên đối tượng, và trả về chinh doi tương đó
-
+    val users = User("Hưng",0 ).apply {
+        name = "Khánh"
+        age = 23
+    }
+    println("Tên người dùng: ${users.name}, độ tuổi: ${users.age}")
 
 }
-data class User(val name: String, val age: Int)
+data class User(var name: String, var age: Int)
