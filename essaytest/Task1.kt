@@ -231,7 +231,7 @@ fun remove(){
 }
 //convert array or list to string
 fun arrayToString(){
-    val listCities = listOf("Hà Nội, Bắc Ninh, Đà Nẵng")
+    val listCities = listOf("Hà Nội", "Bắc Ninh", "Đà Nẵng")
     val messenge = listCities.joinToString(
         separator = ",",
         postfix = ": Là các tỉnh thành ở Hà Nội"
