@@ -1,4 +1,4 @@
-package com.apero.com.trainning.Task1
+package com.apero.com.trainning.task1
 fun main(){
     conditionalExpressions()
     forLoop()
