@@ -1,15 +1,15 @@
 package com.trainning.Task1
 
 fun main(){
-    collection()
-    set()
-    map()
-    common()
+    collectionList()
+    collectionSet()
+    collectionMap()
+    commonFunction()
     array()
     interativeCollection()
 }
 
-fun  collection(){
+fun  collectionList(){
     val listNumber = mutableListOf(3,6,9,12,4,7)
     val people = listOf("Hưng","Đạt","Linh","Chung","Nam")
 
@@ -42,7 +42,7 @@ fun  collection(){
 
 }
 
-fun set(){
+fun collectionSet(){
     val phones = setOf("1234","2345","3456","1234")
     val mutableFruit: MutableSet<String> = mutableSetOf("Chuối", "Táo", "Cam")
     val immutableFlower = setOf("Hoa Sen", "Hoa Hồng", "Hoa Quỳnh")
@@ -71,7 +71,7 @@ fun set(){
 
 }
 
-fun map(){
+fun collectionMap(){
     //tạo map id-> tên, in theo id
     val students = mapOf(1 to "Tiến Hưng", 2 to "Đạt", 3 to "Linh", 4 to "Chung", 5 to "Trần Hưng")
 
@@ -93,7 +93,7 @@ fun map(){
 }
 
 //một vài hàm thường dùng
-fun  common(){
+fun  commonFunction(){
     val scores = listOf(4,7,9,10)
 
     val double = scores.map { it * 2 }
