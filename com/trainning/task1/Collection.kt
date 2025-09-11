@@ -1,12 +1,12 @@
 package com.trainning.Task1
 
 fun main(){
-//    collectionList()
-//    collectionSet()
-//    collectionMap()
-//    commonFunction()
-//    array()
-//    interativeCollection()
+    collectionList()
+    collectionSet()
+    collectionMap()
+    commonFunction()
+    array()
+    interativeCollection()
     iterableFunction()
     iteratorFunction()
     callCountDown()
@@ -164,7 +164,7 @@ fun iteratorFunction(){
 }
 
 class CountDown(private val start: Int): Iterable<Int>{
-    override fun iterator(): Iterator<Int> = object : Iterator<Int>{
+    override fun iterator(): Iterator<Int> = object : Iterator<Int>{ //thiết lập duyệt thủ công
         var started = start
         override fun hasNext(): Boolean = started >= 0
         override fun next(): Int {
