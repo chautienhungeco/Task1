@@ -1,12 +1,15 @@
 package com.trainning.Task1
 
 fun main(){
-    collectionList()
-    collectionSet()
-    collectionMap()
-    commonFunction()
-    array()
-    interativeCollection()
+//    collectionList()
+//    collectionSet()
+//    collectionMap()
+//    commonFunction()
+//    array()
+//    interativeCollection()
+    iterableFunction()
+    iteratorFunction()
+    callCountDown()
 }
 
 fun  collectionList(){
@@ -144,4 +147,33 @@ fun interativeCollection(){
     println("Gộp 2 chuỗi bỏ lặp: ${number1 union number2}")
     println("Gộp 2 chuỗi phần tử trùng: ${number1 intersect number2}")
     println("Phần tử number2 cos mà number1 không có: ${number2 subtract number1}")
+}
+fun iterableFunction(){
+    val listNumber: Iterable<Int> = listOf(10,21,33,8,12)
+    for (n in listNumber){
+        println("Test for: $n")
+    }
+    listNumber.forEach{ println("Test foreach: $it") }
+}
+fun iteratorFunction(){
+    val iterator: Iterator<String> = listOf("Hưng","Đạt","Tài").iterator() //duyệt thủ công vs hasNext()/next()
+    while (iterator.hasNext()){
+        val result = iterator.next()
+        println("test while: $result")
+    }
+}
+
+class CountDown(private val start: Int): Iterable<Int>{
+    override fun iterator(): Iterator<Int> = object : Iterator<Int>{
+        var started = start
+        override fun hasNext(): Boolean = started >= 0
+        override fun next(): Int {
+            if (!hasNext()) throw NoSuchElementException()
+                return started--
+        }
+    }
+}
+fun callCountDown(){
+    for (n in  CountDown(10))
+        println("Chỉ còn: $n s")
 }
