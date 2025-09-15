@@ -1,7 +1,8 @@
 package com.apero.task2
 
-import com.apero.com.trainning.task1.showString
 import kotlin.math.pow
+
+private const val TAG = "OOPInKotlin"
 
 fun main(){
     showClassAndObject()
@@ -10,6 +11,9 @@ fun main(){
     showInterfaceAndAbstractClass()
     showDataClass()
     showSingletonAndCompanionObject()
+    showOuterClass()
+    showInnerClass()
+    showEnumClass()
 }
 fun showClassAndObject(){
     val person1 = Person("Châu Tiến Hưng", 23)
@@ -51,7 +55,7 @@ fun showDataClass(){
     println("Người dùng 2: ${user2.disPlayName()}")
 
     val user1Copy = user1.copy(name = "Trường")
-    println("Sao chép người dùng 1 + thay tên: ${user1Copy}")
+    println("Sao chép người dùng 1 + thay tên: $user1Copy")
     println("So sanh người dùng 1 == người dùng 1 copy: ${user1 == user1Copy}")
 
     val product = Product("Adr001", "Android", 999.99,true)
@@ -80,7 +84,7 @@ class Person(val name: String, var age: Int){
     }
 }
 
-class Students(val studentId: String, val name: String, var grade: String){ //constructor chính
+class Students(val studentId: String, private val name: String, private var grade: String){ //constructor chính
     constructor(studentId: String, name: String, age: Int, grade: String): this(studentId, name, grade){    //constructor phụ
         println("Thêm học sinh ID: $studentId  , tên $name, $age tuổi, $grade điểm")
     }
@@ -89,7 +93,7 @@ class Students(val studentId: String, val name: String, var grade: String){ //co
     }
 }
 
-open class Vehicle(val name: String, val vehicleType: String){
+open class Vehicle(val name: String, private val vehicleType: String){
     open fun makeCar(){
         println("$name ($vehicleType) ")
     }
@@ -98,7 +102,7 @@ open class Vehicle(val name: String, val vehicleType: String){
     }
 }
 
-class Motobike(name: String, val brand: String): Vehicle(name, "Xe máy"){
+class Motobike(name: String, private val brand: String): Vehicle(name, "Xe máy"){
     override fun makeCar() {
         println("$name (thương hiệu $brand)")
     }
@@ -141,12 +145,12 @@ class Eagle(name: String) : Bird(name), Swinable{
 data class User(val id: Int, val name: String, val email: String, val isActive: Boolean = true){
     fun disPlayName(): String = if (isActive) name else "$name chưa kích hoạt"
     companion object{
-        fun createSample(): User = User(1, "Hưng nè","hungct@gmail.com",)
+        fun createSample(): User = User(1, "Hưng nè","hungct@gmail.com")
     }
 }
 
 data class Product(val id: String, val name: String, val price: Double, val inStock: Boolean){
-    fun getFormatteredPrice(): String = "${String.format("%.2f",price)}"
+    fun getFormatteredPrice(): String = String.format("%.2f",price)
     fun isExpensive(): Boolean = price > 100.0
 }
 
@@ -170,6 +174,43 @@ class Matthutils{
     }
 }
 
+class OuterClass{
+private var name: String = "Tiến Hưng"
+class NestedClass {
+    val description: String = "Thông báo từ nesated class"
+    private val id: Int = 101
+    fun foo(){
+//        println("Tên tôi là: $name") // không thể truy cập
+        println("Id của tôi là : $id")
+    }
+}}
 
+class OuterClass2{
+    private var age: Int = 23
+    inner class InnerClass{
+        fun printAge() = "Tôi $age tuổi - Inner class"
+    }
+}
 
+enum class Color(val red: Int, val green: Int, val blue: Int){
+    RED(255,0,0),
+    GREEN(255,165,0),
+    BLUE(0,0,255)
+}
+
+fun showOuterClass(){
+    println(OuterClass.NestedClass().description)
+    val obj = OuterClass.NestedClass()
+    obj.foo()
+}
+
+fun showInnerClass(){
+    val obj2 = OuterClass2().InnerClass().printAge()
+    println(obj2)
+}
+
+fun showEnumClass(){
+    val color = Color.RED
+    println("Mã màu của Red trong RGB: R: ${color.red}, G: ${color.blue}, B: ${color.blue}")
+}
 

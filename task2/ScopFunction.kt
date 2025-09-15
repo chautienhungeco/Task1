@@ -8,9 +8,9 @@ fun main(){
     withFunction()
     applyFunction()
 }
-fun letFunction(){
+fun letFunction() {
     val name: String? = "Hưng"
-    val  result = name?.let {
+    val result = name?.let {
         println("Tên không được phép null: $it")
         it.uppercase()
     }
