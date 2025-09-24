@@ -1,5 +1,5 @@
 package com.apero.task3
-
+/**
 import kotlin.coroutines.*
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.seconds
@@ -147,4 +147,4 @@ suspend fun testSupervisorScope(){
         deffent.await()
     }
     println("Done 3 task")
-}
+}*/

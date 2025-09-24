@@ -1,9 +1,39 @@
 package com.apero.task3.process
 
+import kotlinx.coroutines.*
 import com.apero.task3.data.Transaction
+import com.apero.task3.manage.BuilkTransactionManager
+import com.apero.task3.process.TransactionProcessor
+import com.apero.task3.service.TransactionApiService
 
-fun main(){
-        val processor = TransactionProcessor()
+fun main() = runBlocking {
+    val apiService = TransactionApiService()
+    val transactionProcessor = TransactionProcessor()
+    val builkManager = BuilkTransactionManager(apiService, transactionProcessor)
+
+    val singleTransaction = Transaction("GD007",999.0, "ACC999","ACC888",true)
+    println("--- xử lý giao dịch nhỏ lẻ ---")
+    val singleResult = transactionProcessor.processTransaction(singleTransaction)
+    singleResult.forEach{
+        println(" - ${it.message}")
+    }
+
+    println("--- đang xử lý... ... ... ... ... ...")
+    println("Giả tưởng 3 giây để lấy dữ liệu ... ... ...")
+
+    val result = builkManager.processAllTransactions(this)
+    println("--- hoàn tất xử lý ---")
+
+    result.forEach { tranSactionResult ->
+        val transaction = tranSactionResult.firstOrNull()?.transaction
+        println("--- Kết quả giao dịch là: ${transaction?.id} ---")
+        tranSactionResult.forEach{
+            result ->
+            println("- ${result.message}")
+        }
+
+    }
+/**        val processor = TransactionProcessor()
 
         // Giao dịch hợp lệ
         val validTransaction = Transaction("TXN001", 500.0, "ACC123", "ACC456", false)
@@ -22,4 +52,5 @@ fun main(){
         val invalidResults2 = processor.processTransaction(invalidTransaction2)
         println("\nKết quả giao dịch không hợp lệ (giao dịch nước ngoài):")
         invalidResults2.forEach { println(" - ${it.message}") }
+*/
 }
