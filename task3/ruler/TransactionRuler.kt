@@ -7,13 +7,13 @@ import com.apero.task3.data.TransactionResult
 // tạo một quy tắc kiểm tra
 typealias ValidationRule = (Transaction) -> Boolean
 
-inline fun processWithRule(
+inline fun validateWithRule(
     transaction: Transaction,
     rule: ValidationRule,
     errorMessage: String
-): TransactionResult {
+): TransactionResult? {
     return if (rule(transaction)) {
-        TransactionResult(transaction, TransactionStatus.SUCCESS, "Giao dịch thành công.")
+        null
     } else {
         TransactionResult(transaction, TransactionStatus.FAILURE, errorMessage)
     }

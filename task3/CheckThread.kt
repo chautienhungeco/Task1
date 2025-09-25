@@ -1,8 +1,7 @@
 package com.apero.task3
-/**
-import kotlin.coroutines.*
+
+import kotlinx.coroutines.*
 import kotlin.random.Random
-import kotlin.time.Duration.Companion.seconds
 
 suspend fun main() {
     testCoroutineScope()
@@ -25,8 +24,8 @@ suspend fun testStream(): Unit = coroutineScope {
     }
 }
 
-suspend fun testCoroutineScope(){
-    try{
+suspend fun testCoroutineScope() {
+    try {
         coroutineScope() {
             launch {
                 println("1 Start: ${Thread.currentThread().name}")
@@ -45,12 +44,12 @@ suspend fun testCoroutineScope(){
                 println("3 Done: ${Thread.currentThread().name}")
             }
         }
-    }catch (e: Exception){
+    } catch (e: Exception) {
         println("Ngoại lệ được ném ra: $e")
     }
 }
 
-suspend fun testJob() = coroutineScope{
+suspend fun testJob() = coroutineScope {
     val parentJob = Job()
 
     val scope = CoroutineScope(Dispatchers.Default + parentJob)
@@ -66,14 +65,14 @@ suspend fun testJob() = coroutineScope{
             delay(1000)
             println("Done 2")
             throw RuntimeException("Lỗi thực thi 2")
-        }catch (e: Exception){
+        } catch (e: Exception) {
             println("Lỗi thực thi 2: $e")
         }
     }
     delay(1500)
 }
 
-suspend fun testSupervisorJob() = coroutineScope{
+suspend fun testSupervisorJob() = coroutineScope {
     val superVisorJob = SupervisorJob()
     val scope = CoroutineScope(Dispatchers.Default + superVisorJob)
 
@@ -88,7 +87,7 @@ suspend fun testSupervisorJob() = coroutineScope{
             println("Start 2: ${Thread.currentThread().name}")
             delay(500)
             println("Thực thi 2: ${Thread.currentThread().name}")
-        }catch (e: Exception){
+        } catch (e: Exception) {
             println("Xử lý lỗi: $e")
         }
 
@@ -97,18 +96,20 @@ suspend fun testSupervisorJob() = coroutineScope{
     delay(2000)
 }
 
-suspend fun fun1(){
+suspend fun fun1() {
 
     delay(1000)
     println("Log1: ${Thread.currentThread().name}")
 
 }
-suspend fun fun2(){
+
+suspend fun fun2() {
 
     delay(998)
     println("Log2: ${Thread.currentThread().name}")
 
 }
+
 suspend fun fun3() {
 
     delay(1000)
@@ -123,7 +124,7 @@ suspend fun runAll() = coroutineScope {
     println("done: ${Thread.currentThread().name}")
 }
 
-suspend fun testSupervisorScope(){
+suspend fun testSupervisorScope() {
     supervisorScope {
         launch {
             println("Start 1")
@@ -147,4 +148,4 @@ suspend fun testSupervisorScope(){
         deffent.await()
     }
     println("Done 3 task")
-}*/
+}

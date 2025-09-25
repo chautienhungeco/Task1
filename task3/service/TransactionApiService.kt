@@ -1,18 +1,31 @@
 package com.apero.task3.service
 
-import com.apero.task3.data.Transaction
-import kotlinx.coroutines.delay
-import kotlin.coroutines.*
-class TransactionApiService{
+import com.apero.task3.data.Acounts
+import com.apero.task3.manage.AccountRepository
+import kotlinx.coroutines.*
 
-    //Mô phỏng lấy dữ liệu từ API
-    suspend fun fetchTransactions(): List<Transaction> {
+// Interface (OOP)
+interface IAccountService {
+    suspend fun fetchAccountData(accountId: String): Acounts?
+    suspend fun fetchAllAccounts(): List<Acounts>
+}
+
+class TransactionApiService : IAccountService {
+
+    /**
+     * Coroutine: Sử dụng withContext(Dispatchers.IO) để mô phỏng tác vụ I/O
+     * delay() mô phỏng độ trễ mạng
+     */
+    override suspend fun fetchAccountData(accountId: String): Acounts? =
+        withContext(Dispatchers.IO) {
+            delay(1500)
+            println("... [IO] Đã lấy dữ liệu tài khoản $accountId.")
+            AccountRepository.getAccountById(accountId)
+        }
+
+    override suspend fun fetchAllAccounts(): List<Acounts> = withContext(Dispatchers.IO) {
         delay(3000)
-        return listOf(
-            Transaction("GD004",2500.0,"ACC001","ACC002",true),
-            Transaction("GD005",150.0,"ACC003","ACC004",true),
-            Transaction("GD006",-100.0,"ACC006","ACC005",true)
-
-        )
+        println("...  Đã lấy toàn bộ danh sách tài khoản.")
+        AccountRepository.getAllAcounts()
     }
 }
