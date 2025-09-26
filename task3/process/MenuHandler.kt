@@ -31,12 +31,16 @@ class MenuHandler(val scope: CoroutineScope) {
         var choice: Int
         do {
             showMenu()
-            choice = readln().toDoubleOrZero().toInt()
+            choice = readLine().toDoubleOrZero().toInt()
 
             when (choice) {
                 1 -> displayAllAccounts()
                 2 -> filterAccounts()
                 3 -> handleSingleTransaction()
+                4 -> handleBulkTransaction()
+                5 -> handleAsyncFetch()
+                0 -> println("Cảm ơn đã sử dụng, hẹn gặp lại!")
+                else -> println("Lựa chọn không hợp lệ, thử lại")
             }
         } while (choice != 0)
     }
@@ -46,7 +50,7 @@ class MenuHandler(val scope: CoroutineScope) {
         val accounts = AccountRepository.getAllAcounts()
         for (account in accounts) {
             println(
-                "${account.id}, Chủ tk: ${account.ownerName}, Số dư:${account.balence}  ${account.currency}," +
+                "ID: ${account.id}, Chủ tk: ${account.ownerName}, Số dư:${account.balence}  ${account.currency}," +
                         " Trạng thái: ${if (account.isVerified) "Đã xác thực" else "Chưa xác thực"}"
             )
         }
@@ -62,17 +66,18 @@ class MenuHandler(val scope: CoroutineScope) {
             println("KHông có tài khoản nào có số dư lớn hơn $minBalance")
             return
         } else {
-            println("\nKết quả tìm kiếm: ")
-            filteredAccounts.forEach {
-                println("ID: ${it.id}, Số dư: ${it.balence} ${it.currency}")
-            }
+            //chưa xử lý
+        }
+        println("\nKết quả tìm kiếm: ")
+        filteredAccounts.forEach {
+            println("ID: ${it.id}, Số dư: ${it.balence} ${it.currency}")
         }
     }
 
     fun handleSingleTransaction() {
         println("\n---Thực hiện giao dịch đơn lẻ--")
         print("Điền đúng 1 trong 3 loại giao dịch (DEPOSIT/WITHDRAWAL/TRANSFER): ")
-        val type = readLine().toTransactionTypeOrNull()?.run {
+        val type = readLine().toTransactionTypeOrNull() ?: run {
             println("Loại dịch vụ không đúng!")
             return
         }
@@ -89,36 +94,68 @@ class MenuHandler(val scope: CoroutineScope) {
             null
         }
 
-        val transaction = type?.let {
-            Transaction(
-                "TX-${System.nanoTime()}",
-                it,
-                amount,
-                src,
-                dest
-            )
-        }
-        val result = transaction?.let { transactionProcessor.processTransaction(it) }
+        val transaction = Transaction(UUID.randomUUID().toString(), type, amount, src, dest)
+        val result = transactionProcessor.processTransaction(transaction)
 
         println("--- KÊT QUẢ ---")
-        val hasErrors = result?.any { it.status == TransactionStatus.FAILURE }
-        if (hasErrors == true) {
+        val hasErrors = result.any { it.status == TransactionStatus.FAILURE }
+        if (hasErrors) {
             println("Giao dịch THẤT BẠI, LỖI: ")
             result.forEach { result ->
                 if (result.status == TransactionStatus.FAILURE) {
-                    println("X ${result.message}")
+                    println(" X ${result.message}")
                 } else {
-                    //không làm gì
+                    //TODO
                 }
             }
         } else {
             println("Giao dịch thành công!")
-            println("Thông báo biến đôộng số dư ${src}: ${AccountRepository
-                .getAccountBalance(src) ?: "Không tìm thấy"}")
+            println(
+                "Thông báo biến đôộng số dư ${src}: ${
+                    AccountRepository
+                        .getAccountBalance(src) ?: "Không tìm thấy"
+                }"
+            )
         }
     }
 
-    suspend fun handleAsyncFetch(){
+    suspend fun handleBulkTransaction() {
+        println("\n 4. Xử lý giao dịch hàng loạt (giả định)---")
+        println("Mô phỏng 3 giao dịch phức tạp (2s chờ) ")
+
+        val sampleTransactions = listOf(
+            Transaction("GD009", TransactionType.WITHDRAWAL, 1_000_000.0, "ACC009"),
+            Transaction("GD008", TransactionType.TRANSFER, 60_000_000.0, "ACC008"),
+            Transaction("GD007", TransactionType.DEPOSIT, 500_000.0, "ACC007"),
+            Transaction(
+                "GD006",
+                TransactionType.WITHDRAWAL,
+                100.0,
+                "ACC_NON_EXIT",
+                description = "Tài khoản không tồn tại"
+            ),
+        )
+
+        val startTime = System.currentTimeMillis()
+        val bulkResults = transactionProcessor.bulkProcess(sampleTransactions)
+        val endTime = System.currentTimeMillis()
+
+        println("\n --- Xử lý hoàn thành trong ${endTime - startTime} ms")
+        bulkResults.forEach{
+            transactionResults ->
+            val transaction = transactionResults.first().transaction
+            println("--- Giao dịch ${transaction.id} (${transaction.type})")
+
+            if (transactionResults.any { it.status == TransactionStatus.FAILURE }){
+                transactionResults.filter { it.status == TransactionStatus.FAILURE }
+                    .forEach { println("X Lỗi : ${it.message}") }
+            }else{
+                println("Thành công")
+            }
+        }
+    }
+
+    suspend fun handleAsyncFetch() {
         println("\n---5. Lấy dữ liệu bất đồng bộ---")
         print("Nhập ID tài khoản cần lấy data (VD: ACC001): ")
         val accountId = readLine() ?: return
@@ -130,7 +167,7 @@ class MenuHandler(val scope: CoroutineScope) {
         println("\n--- KẾT QUẢ ---")
         println("Thời gian chờ: ${endTime - startTime} ms")
         if (account != null) {
-            println("   Đã lấy dữ liệu thành công cho ${account.ownerName}")
+            println("   ĐANG... lấy dữ liệu thành công cho ${account.ownerName}")
         } else {
             println("   Không tìm thấy tài khoản $accountId")
         }

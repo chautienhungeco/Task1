@@ -21,7 +21,8 @@ object TransactionRules {
     //check hạn mức giao dịch <50 củ
     val withdrawalLimiterRule: ValidationRule = { transaction ->
         if (transaction.type == TransactionType.WITHDRAWAL
-            || transaction.type == TransactionType.TRANSFER) {
+            || transaction.type == TransactionType.TRANSFER
+        ) {
             transaction.amount <= 50_000_000
         } else {
             true

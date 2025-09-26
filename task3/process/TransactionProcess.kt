@@ -5,12 +5,7 @@ import com.apero.task3.manage.AccountRepository
 import com.apero.task3.data.TransactionResult
 import com.apero.task3.ruler.TransactionRules
 import com.apero.task3.ruler.validateWithRule
-import com.trainning.Task1.callCountDown
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.channels.produce
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.*
 
 class TransactionProcessor {
 
@@ -80,35 +75,35 @@ class TransactionProcessor {
             validationErrors
         }
     }
-}
 
-fun performTransaction(transaction: Transaction): Boolean {
-    return when (transaction.type) {
-        TransactionType.DEPOSIT -> AccountRepository.updateBalance(
-            transaction.sourceAccountId,
-            transaction.amount
-        )
 
-        TransactionType.WITHDRAWAL -> AccountRepository.updateBalance(
-            transaction.sourceAccountId,
-            transaction.amount
-        )
+    fun performTransaction(transaction: Transaction): Boolean {
+        return when (transaction.type) {
+            TransactionType.DEPOSIT -> AccountRepository.updateBalance(
+                transaction.sourceAccountId,
+                transaction.amount
+            )
 
-        TransactionType.TRANSFER -> {
-            val destId = transaction.destinationAccountId ?: return false
-            AccountRepository.updateBalance(transaction.sourceAccountId, -transaction.amount)
-                    && AccountRepository.updateBalance(destId, transaction.amount)
+            TransactionType.WITHDRAWAL -> AccountRepository.updateBalance(
+                transaction.sourceAccountId,
+                -transaction.amount
+            )
+
+            TransactionType.TRANSFER -> {
+                val destId = transaction.destinationAccountId ?: return false
+                AccountRepository.updateBalance(transaction.sourceAccountId, -transaction.amount)
+                        && AccountRepository.updateBalance(destId, transaction.amount)
+            }
         }
+
     }
 
-
-    //test coroutine voi nhieu giao dich
-//    suspend fun bulkProcess(transactions: List<Transaction>): List<List<TransactionResult>> = coroutineScope {
-//        transactions.map { transaction ->
-//            async(Dispatchers.Default) {
-//                processTransaction(transaction)
-//            }
-//        }.awaitAll()
-//    }
+    //xử lý loạt giao dịch với coroutines
+    suspend fun bulkProcess(transaction: List<Transaction>): List<List<TransactionResult>> = coroutineScope {
+        transaction.map { transaction ->
+            async(Dispatchers.Default) {
+                processTransaction(transaction)
+            }
+        }.awaitAll()
+    }
 }
-

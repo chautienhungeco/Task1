@@ -13,13 +13,13 @@ interface IAccountService {
 class TransactionApiService : IAccountService {
 
     /**
-     * Coroutine: Sử dụng withContext(Dispatchers.IO) để mô phỏng tác vụ I/O
+     * Coroutine: để mô phỏng tác vụ I/O
      * delay() mô phỏng độ trễ mạng
      */
     override suspend fun fetchAccountData(accountId: String): Acounts? =
         withContext(Dispatchers.IO) {
             delay(1500)
-            println("... [IO] Đã lấy dữ liệu tài khoản $accountId.")
+            println("...  Đã lấy dữ liệu tài khoản $accountId.")
             AccountRepository.getAccountById(accountId)
         }
 
