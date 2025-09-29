@@ -1,6 +1,7 @@
 package com.apero.task3.process
 
 import com.apero.task3.data.*
+import com.apero.task3.manage.AccountManager
 import com.apero.task3.manage.AccountRepository
 import com.apero.task3.manage.findByMinBalance
 import com.apero.task3.service.TransactionApiService
@@ -11,6 +12,7 @@ import java.util.*
 
 val apiService = TransactionApiService()
 val transactionProcessor = TransactionProcessor()
+val accountManager = AccountManager()
 
 class MenuHandler(val scope: CoroutineScope) {
 
@@ -22,6 +24,7 @@ class MenuHandler(val scope: CoroutineScope) {
         println("3. Thực hiện giao dịch đơn lẻ")
         println("4. Xử lý giao dịch hàng loại (đã nạp data)")
         println("5. Lấy dữ liệu tải khoản")
+        println("6. Quản lý tải khoản(Thêm, Sửa, Xóa)")
         println("0. Thoát chương trình ==========")
 
         print("Mời nhập lựa chọn: ")
@@ -39,6 +42,7 @@ class MenuHandler(val scope: CoroutineScope) {
                 3 -> handleSingleTransaction()
                 4 -> handleBulkTransaction()
                 5 -> handleAsyncFetch()
+                6 -> handleAccountManagement()
                 0 -> println("Cảm ơn đã sử dụng, hẹn gặp lại!")
                 else -> println("Lựa chọn không hợp lệ, thử lại")
             }
@@ -124,9 +128,9 @@ class MenuHandler(val scope: CoroutineScope) {
         println("Mô phỏng 3 giao dịch phức tạp (2s chờ) ")
 
         val sampleTransactions = listOf(
-            Transaction("GD009", TransactionType.WITHDRAWAL, 1_000_000.0, "ACC009"),
-            Transaction("GD008", TransactionType.TRANSFER, 60_000_000.0, "ACC008"),
-            Transaction("GD007", TransactionType.DEPOSIT, 500_000.0, "ACC007"),
+            Transaction("ACC01", TransactionType.WITHDRAWAL, 1_000_000.0, "ACC01"),
+            Transaction("AC002", TransactionType.TRANSFER, 60_000_000.0, "ACC08"),
+            Transaction("AC003", TransactionType.DEPOSIT, 500_000.0, "ACC01"),
             Transaction(
                 "GD006",
                 TransactionType.WITHDRAWAL,
@@ -141,15 +145,14 @@ class MenuHandler(val scope: CoroutineScope) {
         val endTime = System.currentTimeMillis()
 
         println("\n --- Xử lý hoàn thành trong ${endTime - startTime} ms")
-        bulkResults.forEach{
-            transactionResults ->
+        bulkResults.forEach { transactionResults ->
             val transaction = transactionResults.first().transaction
             println("--- Giao dịch ${transaction.id} (${transaction.type})")
 
-            if (transactionResults.any { it.status == TransactionStatus.FAILURE }){
+            if (transactionResults.any { it.status == TransactionStatus.FAILURE }) {
                 transactionResults.filter { it.status == TransactionStatus.FAILURE }
                     .forEach { println("X Lỗi : ${it.message}") }
-            }else{
+            } else {
                 println("Thành công")
             }
         }
@@ -170,6 +173,72 @@ class MenuHandler(val scope: CoroutineScope) {
             println("   ĐANG... lấy dữ liệu thành công cho ${account.ownerName}")
         } else {
             println("   Không tìm thấy tài khoản $accountId")
+        }
+    }
+
+    fun AccountMenu() {
+        println("---6. Menu Quản Lý Tài Khoản---")
+        println("6.1 Thêm tài khoản mới")
+        println("6.2 Sửa tên chủ tài khoản")
+        println("6.3 Xóa tài khoản")
+        println("0. Quay lại")
+        print("Nhập lựa chọn (1,2,3,0): ")
+    }
+
+    fun handleAccountManagement() {
+        var choice: Int
+        do {
+            AccountMenu()
+            choice = readLine().toDoubleOrZero().toInt()
+            when (choice) {
+                1 -> handleAddAccount()
+                2 -> handleUpdateAccount()
+                3 -> handleDeleteAccount()
+                0 -> println("Quay lại menu chính...")
+                else -> println("Lựa chọn không hợp lệ")
+            }
+        } while (choice != 0)
+    }
+
+    fun handleAddAccount() {
+        println("---6.1 Thêm tài khoản mới---")
+        print("Nhập tên chủ sở hữu: ")
+        val ownerName = readLine()?.trim()
+        print("Nhập số dư ban đầu: ")
+        val initialBalance = readln().toDoubleOrZero()
+        if (ownerName.isNullOrBlank()) {
+            println("Lỗi tên chủ sở hữu không đúng")
+            return
+        } else {
+            val result = accountManager.createAccount(ownerName, initialBalance)
+            println(result)
+        }
+    }
+
+    fun handleUpdateAccount() {
+        println("---Sửa tên chủ sở hữu---")
+        print("Nhập ID tài khoản cần sửa(vd: ACC01): ")
+        val accountId = readLine()?.trim()
+        print("Nhập tên chủ sở hữu mới: ")
+        val newOwnerName = readLine()?.trim()
+
+        if (accountId.isNullOrBlank() || newOwnerName.isNullOrBlank()) {
+            println("Tài khoan và tên không đợc để trống")
+        } else {
+            val result = accountManager.modifyAccount(accountId, newOwnerName)
+            println(result)
+        }
+    }
+
+    fun handleDeleteAccount() {
+        print("---Nhập ID tài khoản cần xóa ")
+        val accountId = readLine()?.trim()
+
+        if (accountId.isNullOrBlank()) {
+            println("ID ta khoản không được để trống")
+        } else {
+            val result = accountManager.removeAccount(accountId)
+            println(result)
         }
     }
 }

@@ -76,7 +76,6 @@ class TransactionProcessor {
         }
     }
 
-
     fun performTransaction(transaction: Transaction): Boolean {
         return when (transaction.type) {
             TransactionType.DEPOSIT -> AccountRepository.updateBalance(
@@ -99,11 +98,12 @@ class TransactionProcessor {
     }
 
     //xử lý loạt giao dịch với coroutines
-    suspend fun bulkProcess(transaction: List<Transaction>): List<List<TransactionResult>> = coroutineScope {
-        transaction.map { transaction ->
-            async(Dispatchers.Default) {
-                processTransaction(transaction)
-            }
-        }.awaitAll()
-    }
+    suspend fun bulkProcess(transaction: List<Transaction>): List<List<TransactionResult>> =
+        coroutineScope {
+            transaction.map { transaction ->
+                async(Dispatchers.Default) {
+                    processTransaction(transaction)
+                }
+            }.awaitAll()
+        }
 }

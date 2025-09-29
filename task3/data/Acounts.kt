@@ -8,7 +8,7 @@ enum class TransactionType {
 
 data class Acounts(
     val id: String,
-    val ownerName: String,
+    var ownerName: String,
     val currency: String = "VND",
     val creationDate: Long = System.currentTimeMillis(),
     var balence: Double = 0.0,

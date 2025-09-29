@@ -3,19 +3,49 @@ package com.apero.task3.manage
 import com.apero.task3.data.Acounts
 import com.apero.task3.data.Transaction
 
-object AccountRepository{
+object AccountRepository {
     val accounts = mutableMapOf<String, Acounts>()
     val transactions = mutableListOf<Transaction>()
 
     init {
-        val acc1 = Acounts("ACC01","Hưng hay ho", balence = 10_000_000.0, isVerified = true)
-        val acc2 = Acounts("ACC02","Lê Văn Luyện", balence = 999_999_999.0)
-        val acc3 = Acounts("ACC03","Trịnh Trần Phương Tuấn", balence = 5_000_000.0, currency = "USD")
+        val acc1 = Acounts("ACC01", "Hưng hay ho", balence = 10_000_000.0, isVerified = true)
+        val acc2 = Acounts("ACC02", "Lê Văn Luyện", balence = 999_999_999.0)
+        val acc3 =
+            Acounts("ACC03", "Trịnh Trần Phương Tuấn", balence = 5_000_000.0, currency = "USD")
 
         accounts[acc1.id] = acc1
         accounts[acc2.id] = acc2
         accounts[acc3.id] = acc3
     }
+
+    fun addAccount(account: Acounts): Boolean {
+        return if (accounts.containsKey(account.id)) {
+            false
+        } else {
+            accounts[account.id] = account
+            true
+        }
+    }
+
+    fun updateAccountOwner(accountId: String, newOwnerName: String): Boolean {
+        val account = accounts[accountId]
+        return if (account != null) {
+            accounts[accountId] = account.copy(ownerName = newOwnerName)
+            true
+        } else {
+            false
+        }
+    }
+
+    fun deleteAccount(accountId: String): Boolean {
+        return if (accounts.containsKey(accountId)) {
+            accounts.remove(accountId)
+            true
+        } else {
+            false
+        }
+    }
+
 
     fun getAllAcounts(): List<Acounts> = accounts.values.toList()
 
@@ -29,19 +59,20 @@ object AccountRepository{
         return getAccountById(accountId)?.balence
     }
 
-    fun updateBalance(accountId: String, amount: Double): Boolean{
+    fun updateBalance(accountId: String, amount: Double): Boolean {
         val account = getAccountById(accountId)
-        return if (account != null){
+        return if (account != null) {
             account.balence += amount
             true
-        }else{
+        } else {
             false
         }
     }
 }
 
-fun List<Acounts>.findByMinBalance(minBalance: Double): List<Acounts>{
+fun List<Acounts>.findByMinBalance(minBalance: Double): List<Acounts> {
     return this.filter {
         it.balence >= minBalance
     }
 }
+
