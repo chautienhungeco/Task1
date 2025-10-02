@@ -5,8 +5,11 @@ import com.apero.task3.manage.AccountManager
 import com.apero.task3.manage.AccountRepository
 import com.apero.task3.manage.findByMinBalance
 import com.apero.task3.service.TransactionApiService
+import com.apero.task3.utility.StatsCalculator
 import com.apero.task3.utility.toDoubleOrZero
 import com.apero.task3.utility.toTransactionTypeOrNull
+import com.apero.task3.ruler.*
+
 import kotlinx.coroutines.*
 import java.util.*
 
@@ -25,6 +28,8 @@ class MenuHandler(val scope: CoroutineScope) {
         println("4. Xử lý giao dịch hàng loại (đã nạp data)")
         println("5. Lấy dữ liệu tải khoản")
         println("6. Quản lý tải khoản(Thêm, Sửa, Xóa)")
+        println("7. Phân tích thống kê nhanh")
+        println("8. Bộ lọc theo trạng thái và số dư")
         println("0. Thoát chương trình ==========")
 
         print("Mời nhập lựa chọn: ")
@@ -43,6 +48,8 @@ class MenuHandler(val scope: CoroutineScope) {
                 4 -> handleBulkTransaction()
                 5 -> handleAsyncFetch()
                 6 -> handleAccountManagement()
+                7 -> handleQuickStats()
+                8 -> handleDslFilter()
                 0 -> println("Cảm ơn đã sử dụng, hẹn gặp lại!")
                 else -> println("Lựa chọn không hợp lệ, thử lại")
             }
@@ -239,6 +246,94 @@ class MenuHandler(val scope: CoroutineScope) {
         } else {
             val result = accountManager.removeAccount(accountId)
             println(result)
+        }
+    }
+
+    fun handleQuickStats() {
+        println("--- 7. Phân tích thống kê ---")
+        val allAccounts = AccountRepository.getAllAcounts()
+        val balances = allAccounts.map {
+            it.balence
+        }
+        if (balances.isEmpty()) {
+            println("Không có dữ liệu tài khoản")
+            return
+        } else {
+            //tiếp tục xử lý
+        }
+
+        val analyzer = StatsCalculator<Double>()
+
+        val totolSum = analyzer.calculateSum(balances)
+        val averageBalance = analyzer.calculateAverage(balances)
+
+        val maxBalance = balances.maxOrNull()
+        val minBalance = balances.minOrNull()
+
+        println("---Kết quả phân tích dự kiến---")
+        println(" - Tổng sổ tài khoản: ${allAccounts.size}")
+        println(" - Tổng số dư toàn hệ thống: ${String.format("%,.2f", totolSum)} VNĐ")
+        println(" - Số dư trung bình: ${String.format("%,.2f", averageBalance)} VNĐ")
+
+        if (maxBalance != null) {
+            println("- Số dư lớn nhất: ${String.format("%,.2f", maxBalance)} VNĐ")
+        } else {
+            println("Không tìm thấy số dư lớn nhất")
+        }
+
+        if (minBalance != null) {
+            println("- Số dư lớn nhất: ${String.format("%,.2f", minBalance)} VNĐ")
+        } else {
+            println("Không tìm thấy số dư lớn nhất")
+        }
+    }
+
+    fun handleDslFilter() {
+        println("\n---8. Hàm lọc nhiều điều kiện---")
+        println("--- Ví dụ DSL: Tìm tài khoản đã xác minh + số dư >=1otr---")
+        print("Tài khoản đã XÁC MINH (1)/ chưa XÁC MINH (2) [1/2]: ")
+        val statusChoice = readLine()?.toIntOrNull() ?: 0
+        print("Số tiền tối thiểu cần loc: ")
+        val minBalance = readLine()?.toDoubleOrZero() ?: 0.0
+
+
+        val advencedFilter = buildFilter {
+            if (statusChoice == 1) {
+                isVerify()
+            } else if (statusChoice == 2) {
+                isNotVerify()
+            } else {
+                // Nếu người dùng nhập sai, không thêm điều kiện lọc trạng thái nào
+            }
+            balanceCompare(minBalance)
+        }
+
+        val allAccounts = AccountRepository.getAllAcounts()
+        val filteredAccounts = allAccounts.filter(advencedFilter)
+
+        println("\n---Kết quả lọc nhiều diều kiện---")
+
+        val statusText = when (statusChoice) {
+            1 -> "ĐÃ XÁC MINH"
+            2 -> "CHƯA XÁC MINH"
+            else -> "BẤT KỸ TRẠNG THÁI NÀO"
+        }
+
+        println("Lọc cho: Trạng thái: $statusText và Số dư >= ${String.format("%.0f", minBalance)}")
+        if (filteredAccounts.isEmpty()) {
+            println("Không tìm thấy tài khoản nào thỏa mãn điều kiện.")
+        } else {
+            println("Tìm thấy ${filteredAccounts.size} tài khoản:")
+            filteredAccounts.forEach { account ->
+                println(
+                    "ID: ${account.id}, Tên: ${account.ownerName}, Số dư: ${
+                        String.format(
+                            "%,.2f",
+                            account.balence
+                        )
+                    }, TT: ${if (account.isVerified) "Đã KH" else "Chưa KH"}"
+                )
+            }
         }
     }
 }
